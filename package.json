@@ -41,6 +41,7 @@
         "vscode-test": "^1.6.1"
     },
     "dependencies": {
-        "play-sound": "^1.1.5"
+        "audio-loader": "^1.0.3",
+        "audio-play": "^2.3.1"
     }
 }

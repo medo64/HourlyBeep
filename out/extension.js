@@ -2,7 +2,8 @@
 
 const vscode = require('vscode')
 const path = require('path')
-const player = require('play-sound')({})
+const play = require('audio-play')  // https://www.npmjs.com/package/audio-play
+const load = require('audio-loader')
 
 var audioResourcePath
 var timerId
@@ -14,9 +15,7 @@ function callback() {
     var currHour = date.getHours()
     if (lastHour && (currHour != lastHour)) {
         if (audioResourcePath) {
-            player.play(audioResourcePath, { timeout: 300 }, function (err) {
-                if (err) throw err
-            })
+            load(audioResourcePath).then(play)
         }
     }
     lastHour = currHour
@@ -24,7 +23,7 @@ function callback() {
 
 function startTimer() {
     stopTimer()
-    timerId = setInterval(callback, 1000);
+    timerId = setInterval(callback, 1000)
 }
 
 function stopTimer() {
@@ -37,7 +36,7 @@ function stopTimer() {
 
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
-    audioResourcePath = path.resolve(context.extensionPath, 'resources/3141Hz.mp3')
+    audioResourcePath = path.resolve(context.extensionPath, 'resources/S-2718Hz.wav')
     startTimer()
 }
 exports.activate = activate
