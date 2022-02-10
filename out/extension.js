@@ -2,8 +2,7 @@
 
 const vscode = require('vscode')
 const path = require('path')
-const play = require('audio-play')  // https://www.npmjs.com/package/audio-play
-const load = require('audio-loader')
+const sound = require('sound-play')  // https://www.npmjs.com/package/sound-play
 
 var audioResourcePath
 var timerId
@@ -15,7 +14,7 @@ function callback() {
     var currHour = date.getHours()
     if (lastHour && (currHour != lastHour)) {
         if (audioResourcePath) {
-            load(audioResourcePath).then(play)
+            sound.play(audioResourcePath)
         }
     }
     lastHour = currHour
