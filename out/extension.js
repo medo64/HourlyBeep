@@ -9,13 +9,17 @@ var timerId
 var lastHour
 
 
+function doBeep() {
+    if (audioResourcePath) {
+        sound.play(audioResourcePath)
+    }
+}
+
 function callback() {
     var date = new Date()
     var currHour = date.getHours()
     if (lastHour && (currHour != lastHour)) {
-        if (audioResourcePath) {
-            sound.play(audioResourcePath)
-        }
+        doBeep()
     }
     lastHour = currHour
 }
@@ -44,3 +48,7 @@ function deactivate() {
     stopTimer()
 }
 exports.deactivate = deactivate
+
+vscode.commands.registerCommand('hourlybeep.test', () => {
+    doBeep()
+})

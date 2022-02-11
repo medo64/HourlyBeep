@@ -31,9 +31,17 @@
     },
     "main": "./out/extension",
     "activationEvents": [
-        "onStartupFinished"
+        "onStartupFinished",
+        "onCommand:hourlybeep.test"
     ],
-    "contributes": {},
+    "contributes": {
+        "commands": [
+            {
+                "command": "hourlybeep.test",
+                "title": "Test Hourly Beep"
+            }
+        ]
+    },
     "scripts": {},
     "devDependencies": {
         "eslint": "^8.8.0",
