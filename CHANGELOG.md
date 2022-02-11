@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.2]
+
+- Updated default tone
+- Added test beep command
+
 ## [0.0.1]
 
 - Initial release
