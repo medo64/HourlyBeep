@@ -39,7 +39,7 @@ function stopTimer() {
 
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
-    audioResourcePath = path.resolve(context.extensionPath, 'resources/S-2718Hz.wav')
+    audioResourcePath = path.resolve(context.extensionPath, 'resources/Default.wav')
     startTimer()
 }
 exports.activate = activate
