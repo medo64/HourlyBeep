@@ -11,7 +11,14 @@ var lastHour
 
 function doBeep() {
     if (audioResourcePath) {
-        sound.play(audioResourcePath)
+        // just read config every hour instead of tracking changes as they come
+        const configuration = vscode.workspace.getConfiguration('hourlybeep', null)
+        const volume = configuration.get('volume', 84) || 84
+        var adjustedVolume = volume / 100.0
+        if (adjustedVolume < 0.0) { adjustedVolume = 0.0 }
+        if (adjustedVolume > 1.0) { adjustedVolume = 1.0 }
+
+        sound.play(audioResourcePath, adjustedVolume)
     }
 }
 

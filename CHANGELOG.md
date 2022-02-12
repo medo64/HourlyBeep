@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1.0]
+
+- Added volume control
+
 ## [0.0.3]
 
 - Updated icon

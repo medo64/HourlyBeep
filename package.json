@@ -3,7 +3,7 @@
     "displayName": "Hourly Beep",
     "description": "A gentle beep every hour.",
     "icon": "ICON.png",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "publisher": "medo64",
     "galleryBanner": {
         "color": "#373E6D",
@@ -39,6 +39,22 @@
             {
                 "command": "hourlybeep.test",
                 "title": "Test Hourly Beep"
+            }
+        ],
+        "configuration": [
+            {
+                "type": "object",
+                "title": "Hourly Beep",
+                "properties": {
+                    "hourlybeep.volume": {
+                        "scope": "application",
+                        "description": "Volume between 0 and 100 for the beep.",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "default": 84
+                    }
+                }
             }
         ]
     },
