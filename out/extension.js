@@ -40,7 +40,7 @@ function doBeep() {
 }
 
 function callback() {
-    const date = new Date()
+    const date = new Date(Date.now() + 1000)  // just go 1 second to the future to avoid being late to the party
     const currMinute = date.getMinutes()
     if (lastMinute && (currMinute != lastMinute)) {
         configMinutes.every((/** @type {number} */ minute) => {
