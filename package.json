@@ -53,6 +53,17 @@
                         "minimum": 0,
                         "maximum": 100,
                         "default": 84
+                    },
+                    "hourlybeep.minutes": {
+                        "scope": "application",
+                        "description": "Minutes at which beep will sound.",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 59
+                        },
+                        "default": [ 0 ]
                     }
                 }
             }
