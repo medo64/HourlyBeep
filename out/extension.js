@@ -4,14 +4,19 @@ const vscode = require('vscode')
 const path = require('path')
 const sound = require('sound-play')  // https://www.npmjs.com/package/sound-play
 
-var audioResourcePath
 var timerId
 var lastMinute
+var audioResourcePath
 
 let configVolume
 let configMinutes
 
-function updateConfiguration() {
+/** @param {string} [extensionPath] */
+function updateConfiguration(extensionPath) {
+    if (extensionPath) {  // always updates the first time - will make it configurable later
+        audioResourcePath = path.resolve(extensionPath, 'resources/Default.wav')
+    }
+
     const configuration = vscode.workspace.getConfiguration('hourlybeep', null)
 
     const volume = configuration.get('volume', 84) || 84
@@ -59,14 +64,12 @@ function stopTimer() {
 }
 
 
-updateConfiguration()
-
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
     // @ts-ignore
     const isDebug = (context.extensionMode === 2)
 
-    audioResourcePath = path.resolve(context.extensionPath, 'resources/Default.wav')
+    updateConfiguration(context.extensionPath)
     startTimer()
 
     vscode.workspace.onDidChangeConfiguration(() => {
