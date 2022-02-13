@@ -8,12 +8,16 @@ var timerId
 var lastMinute
 var audioResourcePath
 
-let configVolume
-let configMinutes
+let configIsDebug = false
+let configVolume = 0.84
+let configMinutes = [ 0 ]
 
-/** @param {string} [extensionPath] */
-function updateConfiguration(extensionPath) {
-    if (extensionPath) {  // always updates the first time - will make it configurable later
+/** @param {vscode.ExtensionContext} [context] */
+function updateConfiguration(context) {
+    if (context) {  // always updates the first time - will make it configurable later
+        configIsDebug = (context.extensionMode === 2)
+
+        const extensionPath = context.extensionPath
         audioResourcePath = path.resolve(extensionPath, 'resources/Default.wav')
     }
 
@@ -29,16 +33,15 @@ function updateConfiguration(extensionPath) {
     configMinutes = minutes.sort().filter(function(item, pos) { return minutes.indexOf(item) == pos })  // just to remove duplicates
 }
 
-/** @param {number} [volume] */
-function doBeep(volume) {
+function doBeep() {
     if (audioResourcePath) {
-        sound.play(audioResourcePath, volume)
+        sound.play(audioResourcePath, configVolume)
     }
 }
 
 function callback() {
-    var date = new Date()
-    var currMinute = date.getMinutes()
+    const date = new Date()
+    const currMinute = date.getMinutes()
     if (lastMinute && (currMinute != lastMinute)) {
         configMinutes.every((/** @type {number} */ minute) => {
             if (minute == currMinute) {
@@ -67,23 +70,25 @@ function stopTimer() {
 /** @param {vscode.ExtensionContext} context */
 function activate(context) {
     // @ts-ignore
-    const isDebug = (context.extensionMode === 2)
-
-    updateConfiguration(context.extensionPath)
+    updateConfiguration(context)
     startTimer()
 
     vscode.workspace.onDidChangeConfiguration(() => {
-        if (isDebug) { console.debug(new Date().getTime() + ' onDidChangeConfiguration()') }
+        if (configIsDebug) { console.debug(new Date().getTime() + ' onDidChangeConfiguration()') }
         updateConfiguration()
-    }, null, context.subscriptions)
+    })
+
+    if (configIsDebug) { console.debug(new Date().getTime() + ' activated()') }
 }
 exports.activate = activate
 
 function deactivate() {
     stopTimer()
+    if (configIsDebug) { console.debug(new Date().getTime() + ' deactivated()') }
 }
 exports.deactivate = deactivate
 
 vscode.commands.registerCommand('hourlybeep.test', () => {
-    doBeep(configVolume)
+    if (configIsDebug) { console.debug(new Date().getTime() + ' onHourlyBeepTest()') }
+    doBeep()
 })
