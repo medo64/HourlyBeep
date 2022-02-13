@@ -15,10 +15,14 @@ This extension contributes the following setting:
 
 ### Default Configuration
 
-    "hourlybeep.volume": 84,
-    "hourlybeep.minutes": [ 0 ],
+```json
+"hourlybeep.volume": 84,
+"hourlybeep.minutes": [ 0 ],
+```
 
 
 ### Beep every 30 minutes
 
-    "hourlybeep.minutes": [ 0, 30 ],
+```json
+"hourlybeep.minutes": [ 0, 30 ],
+```

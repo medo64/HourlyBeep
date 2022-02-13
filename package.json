@@ -3,7 +3,7 @@
     "displayName": "Hourly Beep",
     "description": "A gentle beep every hour.",
     "icon": "ICON.png",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "medo64",
     "galleryBanner": {
         "color": "#373E6D",
