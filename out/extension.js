@@ -4,9 +4,9 @@ const vscode = require('vscode')
 const path = require('path')
 const sound = require('sound-play')  // https://www.npmjs.com/package/sound-play
 
-var timerId
-var lastMinute
-var audioResourcePath
+let timerId
+let lastMinute
+let audioResourcePath
 
 let configIsDebug = false
 let configVolume = 0.84
