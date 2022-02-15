@@ -30,11 +30,11 @@ function updateConfiguration(context) {
     if (adjustedVolume < 0.0) { adjustedVolume = 0.0 }
     if (adjustedVolume > 1.0) { adjustedVolume = 1.0 }
 
-    const tones = [ 440.00, 0.00, 293.66 ]
+    const tones = [440.00, 0.00, 293.66]
     configAudioBuffer = getAudioBuffer(tones, adjustedVolume)
 
     const minutes = configuration.get('minutes', [0]) || [0]
-    configMinutes = minutes.sort().filter(function(item, pos) { return minutes.indexOf(item) == pos })  // just to remove duplicates
+    configMinutes = minutes.sort().filter(function (item, pos) { return minutes.indexOf(item) == pos })  // just to remove duplicates
 }
 
 /**
@@ -71,32 +71,36 @@ function getAudioBuffer(tones, volume) {
 }
 
 function doBeep() {
-    const sine = new Readable()
-    sine.push(configAudioBuffer)
-    sine.push(null)
+    if (configAudioBuffer) {
+        const sine = new Readable()
+        sine.push(configAudioBuffer)
+        sine.push(null)
 
-    const speaker = new Speaker({
-        channels: audioChannels,
-        bitDepth: audioBitDepth,
-        sampleRate: audioSampleRate,
-    })
+        const speaker = new Speaker({
+            channels: audioChannels,
+            bitDepth: audioBitDepth,
+            sampleRate: audioSampleRate,
+        })
 
-    sine.pipe(speaker)
+        sine.pipe(speaker)
+    }
 }
 
 function callback() {
-    const date = new Date(Date.now() + 1000)  // just go 1 second to the future to avoid being late to the party
-    const currMinute = date.getMinutes()
-    if (lastMinute && (currMinute != lastMinute)) {
-        configMinutes.every((/** @type {number} */ minute) => {
-            if (minute == currMinute) {
-                doBeep()
-                return false
-            }
-            return true
-        })
+    if (configMinutes) {
+        const date = new Date(Date.now() + 1000)  // just go 1 second to the future to avoid being late to the party
+        const currMinute = date.getMinutes()
+        if (lastMinute && (currMinute != lastMinute)) {
+            configMinutes.every((/** @type {number} */ minute) => {
+                if (minute == currMinute) {
+                    doBeep()
+                    return false
+                }
+                return true
+            })
+        }
+        lastMinute = currMinute
     }
-    lastMinute = currMinute
 }
 
 function startTimer() {
