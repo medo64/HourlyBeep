@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.0]
+
+- Changed how tones are generated
+
 ## [0.1.1]
 
 - Added minutes configuration
