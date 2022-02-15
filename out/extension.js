@@ -1,42 +1,87 @@
 'use strict'
 
-const vscode = require('vscode')
-const path = require('path')
-const sound = require('sound-play')  // https://www.npmjs.com/package/sound-play
+const VSCode = require('vscode')
+
+const Readable = require('stream').Readable
+const BufferAlloc = require('buffer-alloc')  // npm install --save buffer-alloc
+const Speaker = require('speaker')  // https://www.npmjs.com/package/speaker - https://github.com/TooTallNate/node-speaker
 
 let timerId
 let lastMinute
-let audioResourcePath
+
+const audioBitDepth = 16
+const audioChannels = 2
+const audioSampleRate = 44100
 
 let configIsDebug = false
-let configVolume = 0.84
-let configMinutes = [ 0 ]
+let configAudioBuffer
+let configMinutes
 
-/** @param {vscode.ExtensionContext} [context] */
+/** @param {VSCode.ExtensionContext} [context] */
 function updateConfiguration(context) {
     if (context) {  // always updates the first time - will make it configurable later
         configIsDebug = (context.extensionMode === 2)
-
-        const extensionPath = context.extensionPath
-        audioResourcePath = path.resolve(extensionPath, 'resources/Default.wav')
     }
 
-    const configuration = vscode.workspace.getConfiguration('hourlybeep', null)
+    const configuration = VSCode.workspace.getConfiguration('hourlybeep', null)
 
     const volume = configuration.get('volume', 84) || 84
     let adjustedVolume = volume / 100.0
     if (adjustedVolume < 0.0) { adjustedVolume = 0.0 }
     if (adjustedVolume > 1.0) { adjustedVolume = 1.0 }
-    configVolume = adjustedVolume
+
+    const tones = [ 440.00, 0.00, 293.66 ]
+    configAudioBuffer = getAudioBuffer(tones, adjustedVolume)
 
     const minutes = configuration.get('minutes', [0]) || [0]
     configMinutes = minutes.sort().filter(function(item, pos) { return minutes.indexOf(item) == pos })  // just to remove duplicates
 }
 
-function doBeep() {
-    if (audioResourcePath) {
-        sound.play(audioResourcePath, configVolume)
+/**
+ * @param {number[]} tones
+ * @param {number} volume
+ * @returns BufferAlloc
+ */
+function getAudioBuffer(tones, volume) {
+    const toneCount = tones.length
+    const toneDuration = 42  // ms
+    const amplitude = (2 ** (audioBitDepth - 1) - 8) * volume
+    const toneSamples = Math.floor(audioSampleRate * toneDuration / 1000)
+    const sampleSize = audioBitDepth / 8
+    const channelSize = sampleSize * audioChannels
+    const toneSize = toneSamples * channelSize
+
+    const buffer = BufferAlloc(toneCount * toneSize)
+
+    for (let n = 0; n < toneCount; n++) {
+        const frequency = tones[n]
+        const t = (Math.PI * 2 * frequency) / audioSampleRate
+
+        for (let i = 0; i < toneSamples; i++) {
+            const value = Math.round(amplitude * Math.sin(t * i)) // sine wave
+
+            for (let c = 0; c < audioChannels; c++) {
+                const offset = (n * toneSize) + (i * channelSize) + (c * sampleSize)
+                buffer[`writeInt${audioBitDepth}LE`](value, offset)
+            }
+        }
     }
+
+    return buffer
+}
+
+function doBeep() {
+    const sine = new Readable()
+    sine.push(configAudioBuffer)
+    sine.push(null)
+
+    const speaker = new Speaker({
+        channels: audioChannels,
+        bitDepth: audioBitDepth,
+        sampleRate: audioSampleRate,
+    })
+
+    sine.pipe(speaker)
 }
 
 function callback() {
@@ -67,13 +112,13 @@ function stopTimer() {
 }
 
 
-/** @param {vscode.ExtensionContext} context */
+/** @param {VSCode.ExtensionContext} context */
 function activate(context) {
     // @ts-ignore
     updateConfiguration(context)
     startTimer()
 
-    vscode.workspace.onDidChangeConfiguration(() => {
+    VSCode.workspace.onDidChangeConfiguration(() => {
         if (configIsDebug) { console.debug(new Date().getTime() + ' onDidChangeConfiguration()') }
         updateConfiguration()
     })
@@ -88,7 +133,7 @@ function deactivate() {
 }
 exports.deactivate = deactivate
 
-vscode.commands.registerCommand('hourlybeep.test', () => {
+VSCode.commands.registerCommand('hourlybeep.test', () => {
     if (configIsDebug) { console.debug(new Date().getTime() + ' onHourlyBeepTest()') }
     doBeep()
 })
