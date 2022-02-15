@@ -127,6 +127,13 @@ function activate(context) {
         updateConfiguration()
     })
 
+    context.subscriptions.push(
+        VSCode.commands.registerCommand('hourlybeep.test', () => {
+            if (configIsDebug) { console.debug(new Date().getTime() + ' onHourlyBeepTest()') }
+            doBeep()
+        })
+    )
+
     if (configIsDebug) { console.debug(new Date().getTime() + ' activated()') }
 }
 exports.activate = activate
@@ -136,8 +143,3 @@ function deactivate() {
     if (configIsDebug) { console.debug(new Date().getTime() + ' deactivated()') }
 }
 exports.deactivate = deactivate
-
-VSCode.commands.registerCommand('hourlybeep.test', () => {
-    if (configIsDebug) { console.debug(new Date().getTime() + ' onHourlyBeepTest()') }
-    doBeep()
-})
