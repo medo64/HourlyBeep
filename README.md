@@ -26,3 +26,14 @@ This extension contributes the following setting:
 ```json
 "hourlybeep.minutes": [ 0, 30 ],
 ```
+
+
+## Known Issues
+
+### Doesn't Work On Linux
+
+Unfortunately, this extension doesn't work on both Windows and Linux. While I
+can publish it for either, I am currently not able to publish it for both at
+the same time. Thus I decided to publish it for Windows.
+
+Will try to make it work for both (at the same time) some time in the future.

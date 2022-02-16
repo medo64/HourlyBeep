@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.2]
+
+- Windows-only :(
+
 ## [1.0.1]
 
 - Recompiled on Ubuntu
