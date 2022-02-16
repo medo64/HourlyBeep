@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.1]
+
+- Recompiled on Ubuntu
+
 ## [1.0.0]
 
 - Changed how tones are generated
